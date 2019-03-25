@@ -16,14 +16,14 @@ void ClearLCD()
     //lcd_main.home();
 }
 
-void LCDMoveCursor(short row, short col)
+void LCDMoveCursor(uint8_t row, uint8_t col)
 {
 	lcd_main.setCursor(col, row);
 }
 
-void BlinkDisplay(short NumTimes, short PulseTime)
+void BlinkDisplay(uint8_t NumTimes, uint8_t PulseTime)
 {
-	short num = 0, Pulse = PulseTime;
+	uint8_t num = 0, Pulse = PulseTime;
 	if(Pulse < 20)
 		Pulse = 20;
 	for(num = 0; num < NumTimes; num++)
@@ -37,7 +37,7 @@ void BlinkDisplay(short NumTimes, short PulseTime)
 }
 
 // Utilizzano un oggetto di tipo LCD
-void LCDPrintString(short row, short col, char * string)
+void LCDPrintString(uint8_t row, uint8_t col, const char * string)
 {
   uint8_t Len = strlen(string);
   if(row > MAX_LCD_ROW || Len > MAX_LCD_COL + 1 )
@@ -76,7 +76,7 @@ void LCDPrintString(short row, short col, char * string)
 
 }
 
-void LCDPrintValue(short row, short col, float value)
+void LCDPrintValue(uint8_t row, uint8_t col, float value)
 {
   char ValStr[21];
   uint8_t Len = 0;
@@ -110,7 +110,7 @@ void LCDPrintValue(short row, short col, float value)
   lcd_main.print(ValStr);
 }
 
-void LCDPrintValue(short row, short col, uint32_t value)
+void LCDPrintValue(uint8_t row, uint8_t col, uint32_t value)
 {
   char ValStr[21];
   uint8_t Len = 0;
@@ -144,20 +144,88 @@ void LCDPrintValue(short row, short col, uint32_t value)
   lcd_main.print(ValStr);
 }
 
-void LCDPrintChar(short Row, short Col, char * Character)
+void LCDPrintValue(uint8_t row, uint8_t col, uint16_t value)
+{
+  char ValStr[21];
+  uint8_t Len = 0;
+  snprintf(ValStr, 21, "%d", value);
+  Len = strlen(ValStr);
+  if(row > MAX_LCD_ROW || Len > MAX_LCD_COL + 1)
+  {
+	lcd_main.clear();
+	col = CENTER_ALIGN;
+	row = TWO;
+    snprintf(ValStr, 21, "%s", "OVER DIMENSION");
+    Len = strlen(ValStr);
+  }
+
+  switch(col)
+  {
+    case CENTER_ALIGN:
+      col = ((MAX_LCD_COL+1) - Len) / 2;
+      break;
+    case RIGHT_ALIGN:
+      col = (MAX_LCD_COL+1) - Len;
+      break;
+    case LEFT_ALIGN:
+      col = 0;
+      break;
+    default:
+      lcd_main.home();
+      break;
+  }
+  lcd_main.setCursor(col, row);
+  lcd_main.print(ValStr);
+}
+
+void LCDPrintValue(uint8_t row, uint8_t col, uint8_t value)
+{
+  char ValStr[21];
+  uint8_t Len = 0;
+  snprintf(ValStr, 21, "%d", value);
+  Len = strlen(ValStr);
+  if(row > MAX_LCD_ROW || Len > MAX_LCD_COL + 1)
+  {
+	lcd_main.clear();
+	col = CENTER_ALIGN;
+	row = TWO;
+    snprintf(ValStr, 21, "%s", "OVER DIMENSION");
+    Len = strlen(ValStr);
+  }
+
+  switch(col)
+  {
+    case CENTER_ALIGN:
+      col = ((MAX_LCD_COL+1) - Len) / 2;
+      break;
+    case RIGHT_ALIGN:
+      col = (MAX_LCD_COL+1) - Len;
+      break;
+    case LEFT_ALIGN:
+      col = 0;
+      break;
+    default:
+      lcd_main.home();
+      break;
+  }
+  lcd_main.setCursor(col, row);
+  lcd_main.print(ValStr);
+}
+
+void LCDPrintChar(uint8_t Row, uint8_t Col, char * Character)
 {
 	lcd_main.setCursor(Row, Col);
 	lcd_main.print(Character);
 }
 
 
-void ClearChar(short Row, short Col)
+void ClearChar(uint8_t Row, uint8_t Col)
 {
 	lcd_main.setCursor(Col, Row); 
 	lcd_main.print(" ");
 }
 
-void ClearLCDLine(short row)
+void ClearLCDLine(uint8_t row)
 {
 	lcd_main.setCursor(0, row); 
 #ifdef LCD16	
@@ -184,12 +252,12 @@ void LCDBlink(bool IsBlinking)
 		lcd_main.noBlink();
 }
 
-bool LCDCreateIcon(short Icon[], short IconNum)
+bool LCDCreateIcon(const uint8_t *Icon, const uint8_t IconNum)
 {
 	bool Created = false;
 	if(IconNum < 7)
 	{
-		lcd_main.createChar((uint8_t)IconNum, (uint8_t*)Icon);
+		lcd_main.createChar(IconNum, Icon);
 		Created = true;
 	}
 	else
@@ -199,13 +267,13 @@ bool LCDCreateIcon(short Icon[], short IconNum)
 	return Created;
 }
 
-void LCDShowIcon(short IconNum, short Row, short Col)
+void LCDShowIcon(const uint8_t IconNum, uint8_t Row, uint8_t Col)
 {
 	lcd_main.setCursor(Col, Row);
 	lcd_main.write(IconNum);
 }
 
-void ScrollText(char * Text, short Where, short DelayMs, short ScreenPos)
+void ScrollText(char * Text, uint8_t Where, uint8_t DelayMs, uint8_t ScreenPos)
 {
 	uint8_t ScrollLen = 0;
 	uint8_t Len = strlen(Text);
@@ -223,7 +291,7 @@ void ScrollText(char * Text, short Where, short DelayMs, short ScreenPos)
 	}	
 }
 
-void LCDPrintMessage(char * Message, short Row)
+void LCDPrintMessage(char * Message, uint8_t Row)
 {
 	ClearLCD();
 	LCDPrintString(Row, CENTER_ALIGN, Message);
