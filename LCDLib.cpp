@@ -37,12 +37,13 @@ void BlinkDisplay(short NumTimes, short PulseTime)
 }
 
 // Utilizzano un oggetto di tipo LCD
-void LCDPrintString(short row, short col, String string)
+void LCDPrintString(short row, short col, char * string)
 {
-  if(row > MAX_LCD_ROW || string.length() > MAX_LCD_ROW + 1 )
+	uint8_t Len = strlen(string);
+  if(row > MAX_LCD_ROW || Len > MAX_LCD_ROW + 1 )
   {
 	lcd_main.clear();
-	if(string.length() > MAX_LCD_COL + 1)
+	if(Len > MAX_LCD_COL + 1)
 	{
 		col = CENTER_ALIGN;
 		string = "STRING TOO BIG";
@@ -57,10 +58,10 @@ void LCDPrintString(short row, short col, String string)
   switch(col)
   {
     case CENTER_ALIGN:
-      col = ((MAX_LCD_COL+1) - string.length()) / 2;
+      col = ((MAX_LCD_COL+1) - Len) / 2;
       break;
     case RIGHT_ALIGN:
-      col = (MAX_LCD_COL+1) - string.length();
+      col = (MAX_LCD_COL+1) - Len;
       break;
     case LEFT_ALIGN:
       col = 0;
@@ -73,25 +74,28 @@ void LCDPrintString(short row, short col, String string)
 
 }
 
-void LCDPrintValue(short row, short col, short value)
+void LCDPrintValue(short row, short col, float value)
 {
-  String ValStr = String(value);
-  if(row > MAX_LCD_ROW || ValStr.length() > MAX_LCD_COL + 1)
+  char ValStr[21];
+  uint8_t Len = 0;
+  snprintf(ValStr, 21, "%.4f", value);
+  Len = strlen(ValStr);
+  if(row > MAX_LCD_ROW || Len > MAX_LCD_COL + 1)
   {
 	lcd_main.clear();
 	col = CENTER_ALIGN;
 	row = MAX_LCD_ROW;
-    ValStr = "OVER DIMENSION";
+	snprintf(ValStr, 21, "%s", "OVER DIMENSION");
     return;
   }
 
   switch(col)
   {
     case CENTER_ALIGN:
-      col = ((MAX_LCD_COL+1) - ValStr.length()) / 2;
+      col = ((MAX_LCD_COL+1) - Len) / 2;
       break;
     case RIGHT_ALIGN:
-      col = (MAX_LCD_COL+1) - ValStr.length();
+      col = (MAX_LCD_COL+1) - Len;
       break;
     case LEFT_ALIGN:
       col = 0;
@@ -104,7 +108,41 @@ void LCDPrintValue(short row, short col, short value)
   lcd_main.print(ValStr);
 }
 
-void LCDPrintChar(short Row, short Col, String Character)
+void LCDPrintValue(short row, short col, uint32_t value)
+{
+  char ValStr[21];
+  uint8_t Len = 0;
+  snprintf(ValStr, 21, "%d", value);
+  Len = strlen(ValStr);
+  if(row > MAX_LCD_ROW || Len > MAX_LCD_COL + 1)
+  {
+	lcd_main.clear();
+	col = CENTER_ALIGN;
+	row = MAX_LCD_ROW;
+    snprintf(ValStr, 21, "%s", "OVER DIMENSION");
+    return;
+  }
+
+  switch(col)
+  {
+    case CENTER_ALIGN:
+      col = ((MAX_LCD_COL+1) - Len) / 2;
+      break;
+    case RIGHT_ALIGN:
+      col = (MAX_LCD_COL+1) - Len;
+      break;
+    case LEFT_ALIGN:
+      col = 0;
+      break;
+    default:
+      lcd_main.home();
+      break;
+  }
+  lcd_main.setCursor(col, row);
+  lcd_main.print(ValStr);
+}
+
+void LCDPrintChar(short Row, short Col, char * Character)
 {
 	lcd_main.setCursor(Row, Col);
 	lcd_main.print(Character);
@@ -165,12 +203,13 @@ void LCDShowIcon(short IconNum, short Row, short Col)
 	lcd_main.write(IconNum);
 }
 
-void ScrollText(String Text, short Where, short DelayMs, short ScreenPos)
+void ScrollText(char * Text, short Where, short DelayMs, short ScreenPos)
 {
 	uint8_t ScrollLen = 0;
+	uint8_t Len = strlen(Text);
 	if(ScreenPos == CENTER_ALIGN)
 	{
-		ScrollLen = (MAX_LCD_COL - Text.length()) + MAX_LCD_COL;
+		ScrollLen = (MAX_LCD_COL - Len) + MAX_LCD_COL;
 	}
 	for(uint8_t i = 0; i < ScrollLen; i++)
 	{
@@ -182,7 +221,7 @@ void ScrollText(String Text, short Where, short DelayMs, short ScreenPos)
 	}	
 }
 
-void LCDPrintMessage(String Message, short Row)
+void LCDPrintMessage(char * Message, short Row)
 {
 	ClearLCD();
 	LCDPrintString(Row, CENTER_ALIGN, Message);
