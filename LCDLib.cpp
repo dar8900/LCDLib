@@ -39,20 +39,22 @@ void BlinkDisplay(short NumTimes, short PulseTime)
 // Utilizzano un oggetto di tipo LCD
 void LCDPrintString(short row, short col, char * string)
 {
-	uint8_t Len = strlen(string);
-  if(row > MAX_LCD_ROW || Len > MAX_LCD_ROW + 1 )
+  uint8_t Len = strlen(string);
+  if(row > MAX_LCD_ROW || Len > MAX_LCD_COL + 1 )
   {
 	lcd_main.clear();
 	if(Len > MAX_LCD_COL + 1)
 	{
 		col = CENTER_ALIGN;
 		string = "STRING TOO BIG";
+		Len = strlen(string);
 	}
 	else
 	{
 		col = CENTER_ALIGN;
-		row = MAX_LCD_ROW;
-		string = "OVER DIMENSION";		
+		row = TWO;
+		string = "OVER DIMENSION";
+        Len = strlen(string);	
 	}
   }
   switch(col)
@@ -84,9 +86,9 @@ void LCDPrintValue(short row, short col, float value)
   {
 	lcd_main.clear();
 	col = CENTER_ALIGN;
-	row = MAX_LCD_ROW;
+	row = TWO;
 	snprintf(ValStr, 21, "%s", "OVER DIMENSION");
-    return;
+	Len = strlen(ValStr);
   }
 
   switch(col)
@@ -118,9 +120,9 @@ void LCDPrintValue(short row, short col, uint32_t value)
   {
 	lcd_main.clear();
 	col = CENTER_ALIGN;
-	row = MAX_LCD_ROW;
+	row = TWO;
     snprintf(ValStr, 21, "%s", "OVER DIMENSION");
-    return;
+    Len = strlen(ValStr);
   }
 
   switch(col)
