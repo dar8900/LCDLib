@@ -64,7 +64,7 @@ void ClearChar(uint8_t Row, uint8_t Col);
 void ClearLCDLine(uint8_t row);
 void LCDDisplayLight(bool IsOn);
 void LCDBlink(bool IsBlinking);
-bool LCDCreateIcon(const uint8_t *Icon, const uint8_t IconNum);
+bool LCDCreateIcon(uint8_t *Icon, const uint8_t IconNum);
 void LCDShowIcon(const uint8_t IconNum, uint8_t Row, uint8_t Col);
 void ScrollText(char * Text, uint8_t Where, uint8_t DelayMs, uint8_t ScreenPos);
 void LCDPrintMessage(char * Message, uint8_t Row);

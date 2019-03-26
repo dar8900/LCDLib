@@ -252,7 +252,7 @@ void LCDBlink(bool IsBlinking)
 		lcd_main.noBlink();
 }
 
-bool LCDCreateIcon(const uint8_t *Icon, const uint8_t IconNum)
+bool LCDCreateIcon(uint8_t *Icon, const uint8_t IconNum)
 {
 	bool Created = false;
 	if(IconNum < 7)
